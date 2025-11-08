@@ -42,6 +42,19 @@ class DialogStateMachine(
         return Snapshot.EMPTY
     }
 
+    override fun onAction(action: Any, state: DialogState, props: DialogContext): DialogState {
+        return when (action) {
+            is DialogAction.Answer -> {
+                val newResponses = state.responses + (action.questionId to action.answer)
+                state.copy(
+                    currentIndex = state.currentIndex + 1,
+                    responses = newResponses
+                )
+            }
+            else -> state
+        }
+    }
+
     override fun onPropsChanged(old: DialogContext, new: DialogContext, state: DialogState): DialogState {
         // For now, no change on props
         return state
