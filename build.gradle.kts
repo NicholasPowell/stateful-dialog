@@ -6,10 +6,6 @@ plugins {
 group = "com.niloda.contextdialog"
 version = "0.1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.squareup.workflow1:workflow-core-jvm:1.22.0")
