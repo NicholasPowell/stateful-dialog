@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario2Test {
+class MultipleChoiceQuestionDialogTest {
     @Test
-    fun `Scenario 2 Multiple choice question dialog flow`() {
+    fun `Multiple choice question dialog flow`() {
         // Setup
         val question = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue", "Green"))
         val flow = DialogFlow(listOf(question))

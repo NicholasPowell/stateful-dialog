@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario3Test {
+class MultiStepMixedQuestionsDialogTest {
     @Test
-    fun `Scenario 3 Multi-step dialog with mixed question types`() {
+    fun `Multi-step dialog with mixed question types`() {
         // Setup
         val question1 = Question.Text("name", "What is your name?")
         val question2 = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue", "Green"))

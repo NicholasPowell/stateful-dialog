@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario5Test {
+class CompletedDialogResponseCollectionTest {
     @Test
-    fun `Scenario 5 Completed dialog with response collection`() {
+    fun `Completed dialog with response collection`() {
         // Setup with three questions
         val question1 = Question.Text("name", "What is your name?")
         val question2 = Question.Text("age", "How old are you?")

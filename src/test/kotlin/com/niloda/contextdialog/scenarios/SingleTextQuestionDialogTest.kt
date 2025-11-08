@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario1Test {
+class SingleTextQuestionDialogTest {
     @Test
-    fun `Scenario 1 Simple single text question dialog flow`() {
+    fun `Simple single text question dialog flow`() {
         // Setup
         val question = Question.Text("name", "What is your name?")
         val flow = DialogFlow(listOf(question))

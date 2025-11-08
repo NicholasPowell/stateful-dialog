@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario7Test {
+class ContextChangeInterruptionDialogTest {
     @Test
-    fun `Scenario 7 Dialog flow interrupted by user changing context`() {
+    fun `Dialog flow interrupted by user changing context`() {
         // Setup
         val question1 = Question.Text("name", "What is your name?")
         val question2 = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue"))

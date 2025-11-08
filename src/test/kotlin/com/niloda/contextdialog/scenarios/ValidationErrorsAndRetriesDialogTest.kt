@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario4Test {
+class ValidationErrorsAndRetriesDialogTest {
     @Test
-    fun `Scenario 4 Dialog with validation errors and retries`() {
+    fun `Dialog with validation errors and retries`() {
         // Setup
         val question1 = Question.Text("name", "What is your name?")
         val question2 = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue", "Green"))

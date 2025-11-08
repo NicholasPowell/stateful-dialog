@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Scenario6Test {
+class EdgeCasesDialogTest {
     @Test
-    fun `Scenario 6 Edge cases empty dialog`() {
+    fun `Edge cases empty dialog`() {
         // Empty dialog
         val flow = DialogFlow(emptyList())
         val context = DialogContext("user1", "session1")
@@ -30,7 +30,7 @@ class Scenario6Test {
     }
 
     @Test
-    fun `Scenario 6 Edge cases invalid actions`() {
+    fun `Edge cases invalid actions`() {
         val question = Question.Text("q1", "Question?")
         val flow = DialogFlow(listOf(question))
         val context = DialogContext("user1", "session1")
