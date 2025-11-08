@@ -1,30 +1,12 @@
-package com.niloda.contextdialog
+package com.niloda.contextdialog.statemachine
 
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import com.niloda.contextdialog.DialogContext
+import com.niloda.contextdialog.DialogFlow
+import com.niloda.contextdialog.Question
 import com.squareup.workflow1.*
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class DialogState(
-    val currentIndex: Int,
-    val responses: Map<String, String> = emptyMap()
-)
-
-sealed class DialogAction {
-    data class Answer(val questionId: String, val answer: String) : DialogAction()
-}
-
-sealed class ValidationError {
-    data class InvalidChoice(val answer: String, val options: List<String>) : ValidationError()
-    data class EmptyAnswer : ValidationError()
-}
-
-sealed class DialogRendering {
-    data class QuestionRendering(val question: Question, val context: DialogContext) : DialogRendering()
-    data class Completed(val responses: Map<String, String>) : DialogRendering()
-}
 
 class DialogStateMachine(
     private val flow: DialogFlow
