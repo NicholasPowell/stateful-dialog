@@ -39,7 +39,6 @@ val questions = listOf(
 // Create flow context
 val flowContext = FlowContext(
     flowType = "user_onboarding",
-    priority = FlowContext.Priority.NORMAL,
     metadata = mapOf("version" to "1.0")
 )
 
@@ -93,9 +92,9 @@ val choiceQuestion = Question.MultipleChoice(
 
 ### Validation
 
-The library automatically validates answers with adaptive behavior based on flow context:
-- **Normal/Low Priority**: Text questions must not be blank, multiple choice must be from options
-- **High/Urgent Priority**: Validation is relaxed - text accepts any non-blank input, multiple choice accepts any input
+The library automatically validates answers:
+- Text questions: Must not be blank
+- Multiple choice: Must be one of the provided options
 
 Invalid answers keep the dialog in the same state.
 
@@ -158,18 +157,13 @@ data class DialogFlow(
 ```
 
 #### `FlowContext`
-Contextual information about the dialog flow for adaptive behavior.
+Contextual information about the dialog flow.
 
 ```kotlin
 data class FlowContext(
     val flowType: String, // e.g., "onboarding", "survey", "support"
-    val priority: Priority = Priority.NORMAL,
     val metadata: Map<String, String> = emptyMap()
-) {
-    enum class Priority {
-        LOW, NORMAL, HIGH, URGENT
-    }
-}
+)
 ```
 
 #### `DialogStateMachine`

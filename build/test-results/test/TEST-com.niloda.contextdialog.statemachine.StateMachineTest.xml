@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.niloda.contextdialog.statemachine.StateMachineTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-11-08T22:56:37.764Z" hostname="MacBookAir.lan" time="0.009">
+  <properties/>
+  <testcase name="snapshotState returns empty" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.005"/>
+  <testcase name="render completed" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.001"/>
+  <testcase name="render first question" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.001"/>
+  <testcase name="onAction valid answer advances state" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.0"/>
+  <testcase name="initialState" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.0"/>
+  <testcase name="onAction validation error stays same" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.0"/>
+  <testcase name="onAction invalid question id stays same" classname="com.niloda.contextdialog.statemachine.StateMachineTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

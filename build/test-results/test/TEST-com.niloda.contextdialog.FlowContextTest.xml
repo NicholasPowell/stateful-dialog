@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.niloda.contextdialog.FlowContextTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-11-08T22:51:58.373Z" hostname="MacBookAir.lan" time="0.051">
+<testsuite name="com.niloda.contextdialog.FlowContextTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-11-08T22:56:37.672Z" hostname="MacBookAir.lan" time="0.028">
   <properties/>
-  <testcase name="Flow context with high priority relaxes multiple choice validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.044"/>
-  <testcase name="Normal priority flow uses strict validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.001"/>
-  <testcase name="Flow without context uses default validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.005"/>
-  <testcase name="Flow context with high priority relaxes text validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.0"/>
+  <testcase name="Flow context with metadata is preserved" classname="com.niloda.contextdialog.FlowContextTest" time="0.025"/>
+  <testcase name="Flow without context uses strict validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.002"/>
+  <testcase name="Flow without context uses default validation" classname="com.niloda.contextdialog.FlowContextTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

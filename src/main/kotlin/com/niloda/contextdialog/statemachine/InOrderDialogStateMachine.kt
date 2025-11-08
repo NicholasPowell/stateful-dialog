@@ -15,30 +15,13 @@ class InOrderDialogStateMachine(
 ) {
 
     private fun validateAnswer(question: Question, answer: String): Either<ValidationError, String> {
-        val isHighPriority = flow.flowContext?.priority == FlowContext.Priority.HIGH ||
-                            flow.flowContext?.priority == FlowContext.Priority.URGENT
-
         return when (question) {
-            is Question.Text -> {
-                if (isHighPriority) {
-                    // High priority flows allow any non-empty answer
-                    if (answer.isNotBlank()) answer.right() else ValidationError.EmptyAnswer.left()
-                } else {
-                    if (answer.isBlank()) ValidationError.EmptyAnswer.left() else answer.right()
-                }
-            }
-            is Question.MultipleChoice -> {
-                if (isHighPriority && answer.isNotBlank()) {
-                    // High priority allows any answer for multiple choice
-                    answer.right()
-                } else {
-                    if (answer in question.options) answer.right() else
-                        ValidationError.InvalidChoice(
-                            answer = answer,
-                            options = question.options
-                        ).left()
-                }
-            }
+            is Question.Text -> if (answer.isBlank()) ValidationError.EmptyAnswer.left() else answer.right()
+            is Question.MultipleChoice -> if (answer in question.options) answer.right() else
+                ValidationError.InvalidChoice(
+                    answer = answer,
+                    options = question.options
+                ).left()
         }
     }
 

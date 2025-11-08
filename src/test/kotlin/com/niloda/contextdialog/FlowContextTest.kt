@@ -9,54 +9,29 @@ import kotlin.test.assertTrue
 
 class FlowContextTest {
     @Test
-    fun `Flow context with high priority relaxes text validation`() {
+    fun `Flow context with metadata is preserved`() {
         val flowContext = FlowContext(
-            flowType = "urgent_support",
-            priority = FlowContext.Priority.HIGH,
-            metadata = mapOf("department" to "tech")
+            flowType = "user_onboarding",
+            metadata = mapOf("version" to "2.0", "locale" to "en-US")
         )
-        val question = Question.Text("issue", "Describe your issue")
+        val question = Question.Text("name", "What is your name?")
         val flow = DialogFlow(listOf(question), flowContext)
         val stateMachine = InOrderDialogStateMachine(flow)
 
         val state = stateMachine.initialState()
 
-        // With high priority, any non-blank answer should be valid
-        val action = DialogAction.Answer("issue", "My computer is broken!")
+        // Valid answer advances
+        val action = DialogAction.Answer("name", "Alice")
         val newState = stateMachine.onAction(action, state)
 
         assertEquals(1, newState.currentIndex)
-        assertEquals(mapOf("issue" to "My computer is broken!"), newState.responses)
+        assertEquals(mapOf("name" to "Alice"), newState.responses)
     }
 
     @Test
-    fun `Flow context with high priority relaxes multiple choice validation`() {
-        val flowContext = FlowContext(
-            flowType = "survey",
-            priority = FlowContext.Priority.URGENT
-        )
-        val question = Question.MultipleChoice("rating", "Rate us", listOf("Good", "Bad"))
-        val flow = DialogFlow(listOf(question), flowContext)
-        val stateMachine = InOrderDialogStateMachine(flow)
-
-        val state = stateMachine.initialState()
-
-        // With urgent priority, any answer should be accepted
-        val action = DialogAction.Answer("rating", "Excellent")
-        val newState = stateMachine.onAction(action, state)
-
-        assertEquals(1, newState.currentIndex)
-        assertEquals(mapOf("rating" to "Excellent"), newState.responses)
-    }
-
-    @Test
-    fun `Normal priority flow uses strict validation`() {
-        val flowContext = FlowContext(
-            flowType = "regular",
-            priority = FlowContext.Priority.NORMAL
-        )
+    fun `Flow without context uses strict validation`() {
         val question = Question.MultipleChoice("choice", "Choose", listOf("A", "B"))
-        val flow = DialogFlow(listOf(question), flowContext)
+        val flow = DialogFlow(listOf(question)) // no flowContext
         val stateMachine = InOrderDialogStateMachine(flow)
 
         val state = stateMachine.initialState()
