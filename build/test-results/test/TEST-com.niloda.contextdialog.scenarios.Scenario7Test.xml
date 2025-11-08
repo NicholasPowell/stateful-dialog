@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.niloda.contextdialog.scenarios.Scenario7Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-08T21:49:56.354Z" hostname="MacBookAir.lan" time="0.0">
+  <properties/>
+  <testcase name="Scenario 7 Dialog flow interrupted by user changing context" classname="com.niloda.contextdialog.scenarios.Scenario7Test" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
