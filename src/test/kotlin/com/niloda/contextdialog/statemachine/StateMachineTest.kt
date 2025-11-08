@@ -1,6 +1,5 @@
 package com.niloda.contextdialog.statemachine
 
-import arrow.core.Either
 import com.niloda.contextdialog.DialogContext
 import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.Question
@@ -18,7 +17,7 @@ class StateMachineTest {
         )
     )
     private val context = DialogContext("user", "session")
-    private val stateMachine = DialogStateMachine(flow)
+    private val stateMachine = InOrderDialogStateMachine(flow)
 
 
 

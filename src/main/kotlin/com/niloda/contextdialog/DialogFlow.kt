@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DialogFlow(
-    val questions: List<Question>
+    val questions: List<Question>,
+    val flowContext: FlowContext? = null
 )

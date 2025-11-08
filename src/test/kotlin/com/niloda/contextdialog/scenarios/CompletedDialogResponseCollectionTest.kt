@@ -5,8 +5,7 @@ import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.Question
 import com.niloda.contextdialog.statemachine.DialogAction
 import com.niloda.contextdialog.statemachine.DialogRendering
-import com.niloda.contextdialog.statemachine.DialogState
-import com.niloda.contextdialog.statemachine.DialogStateMachine
+import com.niloda.contextdialog.statemachine.InOrderDialogStateMachine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -20,7 +19,7 @@ class CompletedDialogResponseCollectionTest {
         val question3 = Question.MultipleChoice("pet", "Do you have a pet?", listOf("Yes", "No"))
         val flow = DialogFlow(listOf(question1, question2, question3))
         val context = DialogContext("user1", "session1")
-        val stateMachine = DialogStateMachine(flow)
+        val stateMachine = InOrderDialogStateMachine(flow)
 
         var state = stateMachine.initialState()
 

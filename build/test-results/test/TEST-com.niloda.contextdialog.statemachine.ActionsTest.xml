@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.niloda.contextdialog.statemachine.ActionsTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-08T21:52:39.124Z" hostname="MacBookAir.lan" time="0.001">
-  <properties/>
-  <testcase name="DialogAction Answer creation" classname="com.niloda.contextdialog.statemachine.ActionsTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

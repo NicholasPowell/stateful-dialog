@@ -5,8 +5,7 @@ import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.Question
 import com.niloda.contextdialog.statemachine.DialogAction
 import com.niloda.contextdialog.statemachine.DialogRendering
-import com.niloda.contextdialog.statemachine.DialogState
-import com.niloda.contextdialog.statemachine.DialogStateMachine
+import com.niloda.contextdialog.statemachine.InOrderDialogStateMachine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -17,7 +16,7 @@ class EdgeCasesDialogTest {
         // Empty dialog
         val flow = DialogFlow(emptyList())
         val context = DialogContext("user1", "session1")
-        val stateMachine = DialogStateMachine(flow)
+        val stateMachine = InOrderDialogStateMachine(flow)
 
         val state = stateMachine.initialState()
         assertEquals(0, state.currentIndex)
@@ -34,7 +33,7 @@ class EdgeCasesDialogTest {
         val question = Question.Text("q1", "Question?")
         val flow = DialogFlow(listOf(question))
         val context = DialogContext("user1", "session1")
-        val stateMachine = DialogStateMachine(flow)
+        val stateMachine = InOrderDialogStateMachine(flow)
 
         val state = stateMachine.initialState()
 

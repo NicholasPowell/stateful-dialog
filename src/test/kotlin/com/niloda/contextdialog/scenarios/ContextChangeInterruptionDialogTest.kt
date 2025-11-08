@@ -5,8 +5,7 @@ import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.Question
 import com.niloda.contextdialog.statemachine.DialogAction
 import com.niloda.contextdialog.statemachine.DialogRendering
-import com.niloda.contextdialog.statemachine.DialogState
-import com.niloda.contextdialog.statemachine.DialogStateMachine
+import com.niloda.contextdialog.statemachine.InOrderDialogStateMachine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,7 +17,7 @@ class ContextChangeInterruptionDialogTest {
         val question1 = Question.Text("name", "What is your name?")
         val question2 = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue"))
         val flow = DialogFlow(listOf(question1, question2))
-        val stateMachine = DialogStateMachine(flow)
+        val stateMachine = InOrderDialogStateMachine(flow)
 
         var state = stateMachine.initialState()
 

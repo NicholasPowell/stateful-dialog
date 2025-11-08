@@ -7,6 +7,7 @@ A Kotlin library for managing stateful dialog flows using conversational context
 - **Stateful Dialog Management**: Handle sequential question-answer flows with persistent state
 - **Multiple Question Types**: Support for text input and multiple-choice questions
 - **Validation**: Built-in validation for answers with error handling
+- **Flow Context Awareness**: Adapt dialog behavior based on flow context (priority, type, metadata)
 - **Serialization**: Full Kotlin serialization support for persistence
 - **Functional Programming**: Uses Arrow for pure functions and error handling
 - **Workflow Integration**: Leverages Square Workflow for robust state management
@@ -35,8 +36,15 @@ val questions = listOf(
     Question.MultipleChoice("color", "Favorite color?", listOf("Red", "Blue", "Green"))
 )
 
+// Create flow context
+val flowContext = FlowContext(
+    flowType = "user_onboarding",
+    priority = FlowContext.Priority.NORMAL,
+    metadata = mapOf("version" to "1.0")
+)
+
 // Create dialog flow
-val flow = DialogFlow(questions)
+val flow = DialogFlow(questions, flowContext)
 
 // Create state machine
 val stateMachine = DialogStateMachine(flow)
@@ -85,9 +93,9 @@ val choiceQuestion = Question.MultipleChoice(
 
 ### Validation
 
-The library automatically validates answers:
-- Text questions: Must not be blank
-- Multiple choice: Must be one of the provided options
+The library automatically validates answers with adaptive behavior based on flow context:
+- **Normal/Low Priority**: Text questions must not be blank, multiple choice must be from options
+- **High/Urgent Priority**: Validation is relaxed - text accepts any non-blank input, multiple choice accepts any input
 
 Invalid answers keep the dialog in the same state.
 
@@ -140,10 +148,28 @@ sealed class Question {
 ```
 
 #### `DialogFlow`
-Container for a sequence of questions.
+Container for a sequence of questions with optional flow context.
 
 ```kotlin
-data class DialogFlow(val questions: List<Question>)
+data class DialogFlow(
+    val questions: List<Question>,
+    val flowContext: FlowContext? = null
+)
+```
+
+#### `FlowContext`
+Contextual information about the dialog flow for adaptive behavior.
+
+```kotlin
+data class FlowContext(
+    val flowType: String, // e.g., "onboarding", "survey", "support"
+    val priority: Priority = Priority.NORMAL,
+    val metadata: Map<String, String> = emptyMap()
+) {
+    enum class Priority {
+        LOW, NORMAL, HIGH, URGENT
+    }
+}
 ```
 
 #### `DialogStateMachine`

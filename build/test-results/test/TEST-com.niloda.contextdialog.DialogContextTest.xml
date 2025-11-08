@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.niloda.contextdialog.DialogContextTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-11-08T21:52:38.510Z" hostname="MacBookAir.lan" time="0.221">
-  <properties/>
-  <testcase name="DialogContext with empty data" classname="com.niloda.contextdialog.DialogContextTest" time="0.098"/>
-  <testcase name="serialize and deserialize DialogContext" classname="com.niloda.contextdialog.DialogContextTest" time="0.119"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

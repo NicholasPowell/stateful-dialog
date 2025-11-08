@@ -5,8 +5,7 @@ import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.Question
 import com.niloda.contextdialog.statemachine.DialogAction
 import com.niloda.contextdialog.statemachine.DialogRendering
-import com.niloda.contextdialog.statemachine.DialogState
-import com.niloda.contextdialog.statemachine.DialogStateMachine
+import com.niloda.contextdialog.statemachine.InOrderDialogStateMachine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,7 +17,7 @@ class MultipleChoiceQuestionDialogTest {
         val question = Question.MultipleChoice("color", "What is your favorite color?", listOf("Red", "Blue", "Green"))
         val flow = DialogFlow(listOf(question))
         val context = DialogContext("user1", "session1")
-        val stateMachine = DialogStateMachine(flow)
+        val stateMachine = InOrderDialogStateMachine(flow)
 
         // Initial state
         val initialState = stateMachine.initialState()
