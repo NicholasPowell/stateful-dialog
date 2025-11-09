@@ -286,6 +286,31 @@ object IntentionDetector {
 }
 ```
 
+## Testing with Fixtures
+
+The library includes comprehensive scenario fixtures for testing different dialog contexts:
+
+```kotlin
+import com.niloda.contextdialog.fixtures.DialogFixtures
+
+// Use predefined flows for testing
+val onboardingFlow = DialogFixtures.USER_ONBOARDING_FLOW
+val surveyFlow = DialogFixtures.CUSTOMER_SURVEY_FLOW
+
+// Use sample responses for testing
+val responses = DialogFixtures.SampleResponses.ONBOARDING_RESPONSES
+
+// Use different dialog contexts
+val userContext = DialogFixtures.STANDARD_USER_CONTEXT
+val premiumContext = DialogFixtures.PREMIUM_USER_CONTEXT
+```
+
+Available fixtures:
+- **User Onboarding**: 4 questions covering name, email, role, and experience
+- **Customer Survey**: 4 questions about satisfaction, improvements, recommendation, and usage
+- **Support Chat**: 4 questions for issue type, description, severity, and reproduction
+- **Account Recovery**: 4 questions for username, recovery method, last login, and suspicious activity
+
 ## Development
 
 ### Building
