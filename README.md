@@ -7,8 +7,9 @@ A Kotlin library for managing stateful dialog flows using conversational context
 - **Stateful Dialog Management**: Handle sequential question-answer flows with persistent state
 - **Multiple Question Types**: Support for text input and multiple-choice questions
 - **Validation**: Built-in validation for answers with error handling
+- **Intention Detection**: Parse user responses to detect answers, context changes, or combined actions
 - **Flow Context Awareness**: Adapt dialog behavior based on flow context (priority, type, metadata)
-- **Serialization**: Full Kotlin serialization support for persistence
+- **Serialization**: Full Kotlin serialization support for persistence and state snapshots
 - **Functional Programming**: Uses Arrow for pure functions and error handling
 - **Workflow Integration**: Leverages Square Workflow for robust state management
 
@@ -98,6 +99,55 @@ The library automatically validates answers:
 
 Invalid answers keep the dialog in the same state.
 
+### Intention Detection
+
+The library supports parsing user responses to detect different intentions using special prefixes:
+
+- **Regular answers**: Plain text responses (e.g., "John Doe")
+- **Context changes**: Responses starting with `/context <data>` (e.g., "/context new_session")
+- **Combined actions**: Responses like `/answer <answer> /context <data>` (e.g., "/answer Yes /context updated")
+
+```kotlin
+import com.niloda.contextdialog.statemachine.IntentionDetector
+
+// Parse intention from response
+val intention = IntentionDetector.parseIntention("/answer Yes /context new_session")
+
+when (intention) {
+    is IntentionDetector.Intention.Answer -> {
+        // Handle regular answer
+        val action = DialogAction.Answer(questionId, intention.answer)
+        state = stateMachine.onAction(action, state)
+    }
+    is IntentionDetector.Intention.ChangeContext -> {
+        // Handle context change - update DialogContext
+        val newContext = context.copy(data = context.data + ("session" to intention.contextData))
+    }
+    is IntentionDetector.Intention.AnswerWithContextChange -> {
+        // Handle both answer and context change
+        val action = DialogAction.AnswerWithContextChange(questionId, intention.answer, intention.contextData)
+        state = stateMachine.onAction(action, state)
+        val newContext = context.copy(data = context.data + ("session" to intention.contextData))
+    }
+}
+```
+
+For convenience, use the `onResponse` method which handles parsing and state updates:
+
+```kotlin
+val (newState, intention) = stateMachine.onResponse(userInput, state)
+// Use intention to update context if needed
+```
+
+#### API Conventions
+
+- **Answer Prefix**: `/answer <answer>` - Used to explicitly mark an answer when combined with context changes
+- **Context Prefix**: `/context <data>` - Used to change the dialog context
+- **Combined Format**: `/answer <answer> /context <data>` - Answer the current question and change context in one response
+- **Regular Answers**: No prefix required for standard responses
+
+These prefixes allow users to perform multiple actions in a single response, enabling more flexible dialog interactions.
+
 ### Serialization
 
 All models support Kotlin serialization:
@@ -174,7 +224,9 @@ class DialogStateMachine(private val flow: DialogFlow) {
     fun initialState(): DialogState
     fun render(context: DialogContext, state: DialogState): DialogRendering
     fun onAction(action: DialogAction, state: DialogState): DialogState
+    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionDetector.Intention>
     fun snapshotState(state: DialogState): Snapshot
+    fun restoreState(snapshot: Snapshot): DialogState
 }
 ```
 
@@ -194,6 +246,8 @@ Actions that can be performed on the dialog.
 ```kotlin
 sealed class DialogAction {
     data class Answer(val questionId: String, val answer: String) : DialogAction()
+    data class ChangeContext(val contextData: String) : DialogAction()
+    data class AnswerWithContextChange(val questionId: String, val answer: String, val contextData: String) : DialogAction()
 }
 ```
 
@@ -214,6 +268,21 @@ Errors that can occur during validation.
 sealed class ValidationError {
     object EmptyAnswer : ValidationError()
     data class InvalidChoice(val answer: String, val options: List<String>) : ValidationError()
+}
+```
+
+#### `IntentionDetector`
+Parses user responses to detect different intentions.
+
+```kotlin
+object IntentionDetector {
+    sealed class Intention {
+        data class Answer(val answer: String) : Intention()
+        data class ChangeContext(val contextData: String) : Intention()
+        data class AnswerWithContextChange(val answer: String, val contextData: String) : Intention()
+    }
+
+    fun parseIntention(response: String): Intention
 }
 ```
 

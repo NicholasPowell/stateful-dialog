@@ -8,6 +8,7 @@ import com.niloda.contextdialog.DialogFlow
 import com.niloda.contextdialog.FlowContext
 import com.niloda.contextdialog.Question
 import com.squareup.workflow1.*
+import kotlinx.serialization.json.Json
 import okio.ByteString
 
 class InOrderDialogStateMachine(
@@ -39,26 +40,91 @@ class InOrderDialogStateMachine(
     }
 
     fun snapshotState(state: DialogState): Snapshot {
-        // TODO: Implement snapshot for persistence
-        return Snapshot.of(ByteString.EMPTY)
+        val json = Json.encodeToString(DialogState.serializer(), state)
+        return Snapshot.of(ByteString.of(*json.encodeToByteArray()))
+    }
+
+    fun restoreState(snapshot: Snapshot): DialogState {
+        return try {
+            val json = snapshot.bytes.utf8()
+            Json.decodeFromString(DialogState.serializer(), json)
+        } catch (e: Exception) {
+            // If deserialization fails, return initial state
+            initialState()
+        }
     }
 
     fun onAction(action: DialogAction, state: DialogState): DialogState {
-        val answerAction = action as DialogAction.Answer
-        val question = flow.questions.getOrNull(state.currentIndex)
-        if (question != null && question.id == answerAction.questionId) {
-            return validateAnswer(question, answerAction.answer).fold(
-                { error -> state }, // On validation error, stay in same state
-                { validAnswer ->
-                    val newResponses = state.responses + (answerAction.questionId to validAnswer)
-                    state.copy(
-                        currentIndex = state.currentIndex + 1,
-                        responses = newResponses
+        return when (action) {
+            is DialogAction.Answer -> {
+                val question = flow.questions.getOrNull(state.currentIndex)
+                if (question != null && question.id == action.questionId) {
+                    validateAnswer(question, action.answer).fold(
+                        { error -> state }, // On validation error, stay in same state
+                        { validAnswer ->
+                            val newResponses = state.responses + (action.questionId to validAnswer)
+                            state.copy(
+                                currentIndex = state.currentIndex + 1,
+                                responses = newResponses
+                            )
+                        }
                     )
+                } else {
+                    state // Invalid question id or out of bounds
                 }
-            )
-        } else {
-            return state // Invalid question id or out of bounds
+            }
+            is DialogAction.ChangeContext -> {
+                // Context change handled by caller, state remains the same
+                state
+            }
+            is DialogAction.AnswerWithContextChange -> {
+                val question = flow.questions.getOrNull(state.currentIndex)
+                if (question != null && question.id == action.questionId) {
+                    validateAnswer(question, action.answer).fold(
+                        { error -> state }, // On validation error, stay in same state
+                        { validAnswer ->
+                            val newResponses = state.responses + (action.questionId to validAnswer)
+                            state.copy(
+                                currentIndex = state.currentIndex + 1,
+                                responses = newResponses
+                            )
+                        }
+                    )
+                } else {
+                    state // Invalid question id or out of bounds
+                }
+            }
         }
+    }
+
+    /**
+     * Processes a user response by parsing the intention and updating the dialog state.
+     * Returns the new state and the parsed intention for handling context changes.
+     */
+    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionDetector.Intention> {
+        val intention = IntentionDetector.parseIntention(response)
+        val newState = when (intention) {
+            is IntentionDetector.Intention.Answer -> {
+                val question = flow.questions.getOrNull(state.currentIndex)
+                if (question != null) {
+                    onAction(DialogAction.Answer(question.id, intention.answer), state)
+                } else {
+                    state // Dialog completed, ignore
+                }
+            }
+            is IntentionDetector.Intention.ChangeContext -> {
+                // State unchanged, intention returned for caller to handle context change
+                state
+            }
+            is IntentionDetector.Intention.AnswerWithContextChange -> {
+                val question = flow.questions.getOrNull(state.currentIndex)
+                if (question != null) {
+                    onAction(DialogAction.AnswerWithContextChange(question.id, intention.answer, intention.contextData), state)
+                } else {
+                    state // Dialog completed, ignore
+                }
+            }
+        }
+        return newState to intention
     }
 }

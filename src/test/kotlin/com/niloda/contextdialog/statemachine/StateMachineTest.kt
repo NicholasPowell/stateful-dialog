@@ -7,6 +7,7 @@ import com.squareup.workflow1.Snapshot
 import okio.ByteString
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class StateMachineTest {
@@ -84,10 +85,24 @@ class StateMachineTest {
     }
 
     @Test
-    fun `snapshotState returns empty`() {
-        val state = DialogState(1)
+    fun `snapshotState serializes state correctly`() {
+        val state = DialogState(2, mapOf("q1" to "answer1", "q2" to "answer2"))
         val snapshot = stateMachine.snapshotState(state)
 
-        assertEquals(Snapshot.of(ByteString.EMPTY), snapshot)
+        // Should not be empty
+        assertNotEquals(Snapshot.of(ByteString.EMPTY), snapshot)
+
+        // Should be able to restore
+        val restored = stateMachine.restoreState(snapshot)
+        assertEquals(state, restored)
+    }
+
+    @Test
+    fun `restoreState handles invalid snapshot gracefully`() {
+        val invalidSnapshot = Snapshot.of(ByteString.of(*"invalid json".encodeToByteArray()))
+        val restored = stateMachine.restoreState(invalidSnapshot)
+
+        // Should return initial state on failure
+        assertEquals(stateMachine.initialState(), restored)
     }
 }
