@@ -1,0 +1,1 @@
+By default, new tasks should be created in https://github.com/users/NicholasPowell/projects/4. Do not start executing until the user has reviewed and asked for execution. When executing, read the desired task from the github project, update its status, and commit your changes as a PR for approval.
