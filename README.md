@@ -109,21 +109,22 @@ The library supports parsing user responses to detect different intentions using
 
 ```kotlin
 import com.niloda.contextdialog.statemachine.IntentionDetector
+import com.niloda.contextdialog.statemachine.IntentionParser
 
 // Parse intention from response
 val intention = IntentionDetector.parseIntention("/answer Yes /context new_session")
 
 when (intention) {
-    is IntentionDetector.Intention.Answer -> {
+    is IntentionParser.Intention.Answer -> {
         // Handle regular answer
         val action = DialogAction.Answer(questionId, intention.answer)
         state = stateMachine.onAction(action, state)
     }
-    is IntentionDetector.Intention.ChangeContext -> {
+    is IntentionParser.Intention.ChangeContext -> {
         // Handle context change - update DialogContext
         val newContext = context.copy(data = context.data + ("session" to intention.contextData))
     }
-    is IntentionDetector.Intention.AnswerWithContextChange -> {
+    is IntentionParser.Intention.AnswerWithContextChange -> {
         // Handle both answer and context change
         val action = DialogAction.AnswerWithContextChange(questionId, intention.answer, intention.contextData)
         state = stateMachine.onAction(action, state)
@@ -138,6 +139,38 @@ For convenience, use the `onResponse` method which handles parsing and state upd
 val (newState, intention) = stateMachine.onResponse(userInput, state)
 // Use intention to update context if needed
 ```
+
+#### Custom Intention Parsers
+
+You can provide your own intention detection logic by implementing the `IntentionParser` interface:
+
+```kotlin
+import com.niloda.contextdialog.statemachine.IntentionParser
+
+// Create a custom parser
+class CustomIntentionParser : IntentionParser {
+    override fun parseIntention(response: String): IntentionParser.Intention {
+        return when {
+            response.equals("EXIT", ignoreCase = true) -> 
+                IntentionParser.Intention.ChangeContext("exit_requested")
+            response.startsWith("!") -> 
+                IntentionParser.Intention.ChangeContext(response.substring(1))
+            else -> 
+                IntentionParser.Intention.Answer(response)
+        }
+    }
+}
+
+// Use custom parser with state machine
+val customParser = CustomIntentionParser()
+val stateMachine = InOrderDialogStateMachine(flow, customParser)
+```
+
+This allows you to:
+- Implement domain-specific intention detection (e.g., NLP-based parsing)
+- Use different command patterns (e.g., "!" prefix instead of "/context")
+- Integrate with external services for intent recognition
+- Support multiple languages or dialects
 
 #### API Conventions
 
@@ -220,11 +253,14 @@ data class FlowContext(
 The main state machine for managing dialog flow.
 
 ```kotlin
-class DialogStateMachine(private val flow: DialogFlow) {
+class InOrderDialogStateMachine(
+    private val flow: DialogFlow,
+    private val intentionParser: IntentionParser = IntentionDetector
+) {
     fun initialState(): DialogState
     fun render(context: DialogContext, state: DialogState): DialogRendering
     fun onAction(action: DialogAction, state: DialogState): DialogState
-    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionDetector.Intention>
+    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionParser.Intention>
     fun snapshotState(state: DialogState): Snapshot
     fun restoreState(snapshot: Snapshot): DialogState
 }
@@ -271,11 +307,11 @@ sealed class ValidationError {
 }
 ```
 
-#### `IntentionDetector`
-Parses user responses to detect different intentions.
+#### `IntentionParser`
+Service Provider Interface (SPI) for parsing user intentions from responses.
 
 ```kotlin
-object IntentionDetector {
+interface IntentionParser {
     sealed class Intention {
         data class Answer(val answer: String) : Intention()
         data class ChangeContext(val contextData: String) : Intention()
@@ -285,6 +321,17 @@ object IntentionDetector {
     fun parseIntention(response: String): Intention
 }
 ```
+
+#### `IntentionDetector`
+Default implementation of `IntentionParser` that uses prefix-based parsing.
+
+```kotlin
+object IntentionDetector : IntentionParser {
+    // Default implementation
+    override fun parseIntention(response: String): IntentionParser.Intention
+}
+```
+
 
 ## Testing with Fixtures
 
