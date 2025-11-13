@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.niloda.contextdialog.scenarios.EdgeCasesDialogTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-11-08T22:56:37.739Z" hostname="MacBookAir.lan" time="0.001">
-  <properties/>
-  <testcase name="Edge cases invalid actions" classname="com.niloda.contextdialog.scenarios.EdgeCasesDialogTest" time="0.001"/>
-  <testcase name="Edge cases empty dialog" classname="com.niloda.contextdialog.scenarios.EdgeCasesDialogTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.niloda.contextdialog.scenarios.MultipleChoiceQuestionDialogTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-11-08T22:56:37.746Z" hostname="MacBookAir.lan" time="0.0">
-  <properties/>
-  <testcase name="Multiple choice question dialog flow" classname="com.niloda.contextdialog.scenarios.MultipleChoiceQuestionDialogTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

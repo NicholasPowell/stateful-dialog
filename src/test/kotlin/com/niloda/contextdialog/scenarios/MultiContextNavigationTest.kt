@@ -6,6 +6,7 @@ import com.niloda.contextdialog.fixtures.DialogFixtures.SUPPORT_CHAT_FLOW
 import com.niloda.contextdialog.fixtures.DialogFixtures.USER_ONBOARDING_FLOW
 import com.niloda.contextdialog.statemachine.DialogRendering
 import com.niloda.contextdialog.statemachine.InOrderDialogStateMachine
+import com.niloda.contextdialog.statemachine.IntentionParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -95,7 +96,7 @@ class MultiContextNavigationTest {
         val (newState4, intention4) = currentMachine.onResponse("/answer The app is great! /context support_needed", currentState)
         println("Intention detected: ${intention4::class.simpleName}")
         assertEquals("AnswerWithContextChange", intention4::class.simpleName)
-        val awcc = intention4 as com.niloda.contextdialog.statemachine.IntentionDetector.Intention.AnswerWithContextChange
+        val awcc = intention4 as IntentionParser.Intention.AnswerWithContextChange
         println("Answer: '${awcc.answer}', Context data: '${awcc.contextData}'")
         assertEquals("The app is great!", awcc.answer)
         assertEquals("support_needed", awcc.contextData)

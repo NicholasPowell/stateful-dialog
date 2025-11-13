@@ -12,7 +12,8 @@ import kotlinx.serialization.json.Json
 import okio.ByteString
 
 class InOrderDialogStateMachine(
-    private val flow: DialogFlow
+    private val flow: DialogFlow,
+    private val intentionParser: IntentionParser = IntentionDetector
 ) {
 
     private fun validateAnswer(question: Question, answer: String): Either<ValidationError, String> {
@@ -101,10 +102,10 @@ class InOrderDialogStateMachine(
      * Processes a user response by parsing the intention and updating the dialog state.
      * Returns the new state and the parsed intention for handling context changes.
      */
-    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionDetector.Intention> {
-        val intention = IntentionDetector.parseIntention(response)
+    fun onResponse(response: String, state: DialogState): Pair<DialogState, IntentionParser.Intention> {
+        val intention = intentionParser.parseIntention(response)
         val newState = when (intention) {
-            is IntentionDetector.Intention.Answer -> {
+            is IntentionParser.Intention.Answer -> {
                 val question = flow.questions.getOrNull(state.currentIndex)
                 if (question != null) {
                     onAction(DialogAction.Answer(question.id, intention.answer), state)
@@ -112,11 +113,11 @@ class InOrderDialogStateMachine(
                     state // Dialog completed, ignore
                 }
             }
-            is IntentionDetector.Intention.ChangeContext -> {
+            is IntentionParser.Intention.ChangeContext -> {
                 // State unchanged, intention returned for caller to handle context change
                 state
             }
-            is IntentionDetector.Intention.AnswerWithContextChange -> {
+            is IntentionParser.Intention.AnswerWithContextChange -> {
                 val question = flow.questions.getOrNull(state.currentIndex)
                 if (question != null) {
                     onAction(DialogAction.AnswerWithContextChange(question.id, intention.answer, intention.contextData), state)
