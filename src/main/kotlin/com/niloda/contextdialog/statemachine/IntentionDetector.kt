@@ -1,21 +1,16 @@
 package com.niloda.contextdialog.statemachine
 
-import com.niloda.contextdialog.DialogContext
-
 /**
- * Intention detection for dialog responses.
+ * Default implementation of IntentionParser for dialog responses.
  * Supports prefixes for context changes and combined actions.
+ * 
+ * This object provides backward compatibility while implementing the
+ * IntentionParser SPI interface.
  */
-object IntentionDetector {
+object IntentionDetector : IntentionParser {
 
     private const val CONTEXT_PREFIX = "/context"
     private const val ANSWER_PREFIX = "/answer"
-
-    sealed class Intention {
-        data class Answer(val answer: String) : Intention()
-        data class ChangeContext(val contextData: String) : Intention()
-        data class AnswerWithContextChange(val answer: String, val contextData: String) : Intention()
-    }
 
     /**
      * Parses the intention from a user response.
@@ -24,13 +19,13 @@ object IntentionDetector {
      * - "/answer <answer> /context <data>" - Answer and change context
      * - Plain text - Regular answer
      */
-    fun parseIntention(response: String): Intention {
+    override fun parseIntention(response: String): IntentionParser.Intention {
         val trimmed = response.trim()
 
         // Check for /context prefix
         if (trimmed.startsWith(CONTEXT_PREFIX)) {
             val contextData = trimmed.removePrefix(CONTEXT_PREFIX).trim()
-            return Intention.ChangeContext(contextData)
+            return IntentionParser.Intention.ChangeContext(contextData)
         }
 
         // Check for /answer prefix
@@ -40,14 +35,14 @@ object IntentionDetector {
             if (parts.size == 2) {
                 val answer = parts[0].trim()
                 val contextData = parts[1].trim()
-                return Intention.AnswerWithContextChange(answer, contextData)
+                return IntentionParser.Intention.AnswerWithContextChange(answer, contextData)
             } else {
                 // Invalid format, treat as regular answer
-                return Intention.Answer(trimmed)
+                return IntentionParser.Intention.Answer(trimmed)
             }
         }
 
         // Default to regular answer
-        return Intention.Answer(trimmed)
+        return IntentionParser.Intention.Answer(trimmed)
     }
 }

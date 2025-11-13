@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.niloda.contextdialog.statemachine.IntentionDetectionTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2025-11-13T03:26:45.506Z" hostname="runnervmw9dnm" time="0.054">
+  <properties/>
+  <testcase name="IntentionDetector parses regular answer" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.023"/>
+  <testcase name="IntentionDetector parses context change" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.001"/>
+  <testcase name="Custom intention parser can be provided" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.014"/>
+  <testcase name="onResponse handles regular answer" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <testcase name="onResponse handles validation errors for answers" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.001"/>
+  <testcase name="IntentionDetector handles invalid answer with context format" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <testcase name="onResponse handles context change" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <testcase name="onResponse handles invalid multiple choice answers" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.009"/>
+  <testcase name="State machine handles ChangeContext action" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.001"/>
+  <testcase name="State machine handles AnswerWithContextChange action" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <testcase name="onResponse handles answer with context change" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.003"/>
+  <testcase name="onResponse ignores responses when dialog completed" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <testcase name="IntentionDetector parses answer with context change" classname="com.niloda.contextdialog.statemachine.IntentionDetectionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

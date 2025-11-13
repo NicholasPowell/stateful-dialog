@@ -11,22 +11,22 @@ class IntentionDetectionTest {
     @Test
     fun `IntentionDetector parses regular answer`() {
         val intention = IntentionDetector.parseIntention("My answer")
-        assertTrue(intention is IntentionDetector.Intention.Answer)
-        assertEquals("My answer", (intention as IntentionDetector.Intention.Answer).answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
+        assertEquals("My answer", (intention as IntentionParser.Intention.Answer).answer)
     }
 
     @Test
     fun `IntentionDetector parses context change`() {
         val intention = IntentionDetector.parseIntention("/context new_session_data")
-        assertTrue(intention is IntentionDetector.Intention.ChangeContext)
-        assertEquals("new_session_data", (intention as IntentionDetector.Intention.ChangeContext).contextData)
+        assertTrue(intention is IntentionParser.Intention.ChangeContext)
+        assertEquals("new_session_data", (intention as IntentionParser.Intention.ChangeContext).contextData)
     }
 
     @Test
     fun `IntentionDetector parses answer with context change`() {
         val intention = IntentionDetector.parseIntention("/answer Yes /context updated")
-        assertTrue(intention is IntentionDetector.Intention.AnswerWithContextChange)
-        val awcc = intention as IntentionDetector.Intention.AnswerWithContextChange
+        assertTrue(intention is IntentionParser.Intention.AnswerWithContextChange)
+        val awcc = intention as IntentionParser.Intention.AnswerWithContextChange
         assertEquals("Yes", awcc.answer)
         assertEquals("updated", awcc.contextData)
     }
@@ -34,8 +34,8 @@ class IntentionDetectionTest {
     @Test
     fun `IntentionDetector handles invalid answer with context format`() {
         val intention = IntentionDetector.parseIntention("/answer invalid")
-        assertTrue(intention is IntentionDetector.Intention.Answer)
-        assertEquals("/answer invalid", (intention as IntentionDetector.Intention.Answer).answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
+        assertEquals("/answer invalid", (intention as IntentionParser.Intention.Answer).answer)
     }
 
     @Test
@@ -66,8 +66,8 @@ class IntentionDetectionTest {
         val state = stateMachine.initialState()
 
         val (newState, intention) = stateMachine.onResponse("My answer", state)
-        assertTrue(intention is IntentionDetector.Intention.Answer)
-        assertEquals("My answer", (intention as IntentionDetector.Intention.Answer).answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
+        assertEquals("My answer", (intention as IntentionParser.Intention.Answer).answer)
         assertEquals(1, newState.currentIndex)
         assertEquals(mapOf("q1" to "My answer"), newState.responses)
     }
@@ -79,8 +79,8 @@ class IntentionDetectionTest {
         val state = stateMachine.initialState()
 
         val (newState, intention) = stateMachine.onResponse("/context new_data", state)
-        assertTrue(intention is IntentionDetector.Intention.ChangeContext)
-        assertEquals("new_data", (intention as IntentionDetector.Intention.ChangeContext).contextData)
+        assertTrue(intention is IntentionParser.Intention.ChangeContext)
+        assertEquals("new_data", (intention as IntentionParser.Intention.ChangeContext).contextData)
         assertEquals(state, newState) // State unchanged
     }
 
@@ -91,8 +91,8 @@ class IntentionDetectionTest {
         val state = stateMachine.initialState()
 
         val (newState, intention) = stateMachine.onResponse("/answer Yes /context updated", state)
-        assertTrue(intention is IntentionDetector.Intention.AnswerWithContextChange)
-        val awcc = intention as IntentionDetector.Intention.AnswerWithContextChange
+        assertTrue(intention is IntentionParser.Intention.AnswerWithContextChange)
+        val awcc = intention as IntentionParser.Intention.AnswerWithContextChange
         assertEquals("Yes", awcc.answer)
         assertEquals("updated", awcc.contextData)
         assertEquals(1, newState.currentIndex)
@@ -107,7 +107,7 @@ class IntentionDetectionTest {
         state = stateMachine.onAction(DialogAction.Answer("q1", "Answer"), state) // Complete dialog
 
         val (newState, intention) = stateMachine.onResponse("Ignored", state)
-        assertTrue(intention is IntentionDetector.Intention.Answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
         assertEquals(state, newState) // State unchanged
     }
 
@@ -118,7 +118,7 @@ class IntentionDetectionTest {
         val state = stateMachine.initialState()
 
         val (newState, intention) = stateMachine.onResponse("", state) // Empty answer
-        assertTrue(intention is IntentionDetector.Intention.Answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
         assertEquals(state, newState) // State unchanged due to validation error
     }
 
@@ -129,7 +129,37 @@ class IntentionDetectionTest {
         val state = stateMachine.initialState()
 
         val (newState, intention) = stateMachine.onResponse("C", state) // Invalid choice
-        assertTrue(intention is IntentionDetector.Intention.Answer)
+        assertTrue(intention is IntentionParser.Intention.Answer)
         assertEquals(state, newState) // State unchanged due to validation error
+    }
+
+    @Test
+    fun `Custom intention parser can be provided`() {
+        // Create a custom parser that treats "EXIT" as a context change
+        val customParser = object : IntentionParser {
+            override fun parseIntention(response: String): IntentionParser.Intention {
+                return when {
+                    response.equals("EXIT", ignoreCase = true) -> 
+                        IntentionParser.Intention.ChangeContext("exit_requested")
+                    else -> IntentionParser.Intention.Answer(response)
+                }
+            }
+        }
+
+        val flow = DialogFlow(listOf(Question.Text("q1", "Question")))
+        val stateMachine = InOrderDialogStateMachine(flow, customParser)
+        val state = stateMachine.initialState()
+
+        // Test that "EXIT" is treated as context change
+        val (newState, intention) = stateMachine.onResponse("EXIT", state)
+        assertTrue(intention is IntentionParser.Intention.ChangeContext)
+        assertEquals("exit_requested", (intention as IntentionParser.Intention.ChangeContext).contextData)
+        assertEquals(state, newState) // State unchanged for context change
+
+        // Test that regular answer still works
+        val (newState2, intention2) = stateMachine.onResponse("My answer", state)
+        assertTrue(intention2 is IntentionParser.Intention.Answer)
+        assertEquals("My answer", (intention2 as IntentionParser.Intention.Answer).answer)
+        assertEquals(1, newState2.currentIndex)
     }
 }
