@@ -11,7 +11,7 @@ class DialogFixturesTest {
     @Test
     fun `user onboarding flow has correct structure`() {
         val flow = DialogFixtures.USER_ONBOARDING_FLOW
-        assertEquals(4, flow.questions.size)
+        assertEquals(5, flow.questions.size)
         assertEquals("user_onboarding", flow.flowContext?.flowType)
         assertEquals("1.0", flow.flowContext?.metadata?.get("version"))
     }
@@ -19,7 +19,7 @@ class DialogFixturesTest {
     @Test
     fun `customer survey flow has correct structure`() {
         val flow = DialogFixtures.CUSTOMER_SURVEY_FLOW
-        assertEquals(4, flow.questions.size)
+        assertEquals(5, flow.questions.size)
         assertEquals("customer_survey", flow.flowContext?.flowType)
         assertEquals("Q4_2024", flow.flowContext?.metadata?.get("survey_id"))
     }
@@ -27,7 +27,7 @@ class DialogFixturesTest {
     @Test
     fun `support chat flow has correct structure`() {
         val flow = DialogFixtures.SUPPORT_CHAT_FLOW
-        assertEquals(4, flow.questions.size)
+        assertEquals(5, flow.questions.size)
         assertEquals("support_chat", flow.flowContext?.flowType)
         assertEquals("technical", flow.flowContext?.metadata?.get("category"))
     }
@@ -35,7 +35,7 @@ class DialogFixturesTest {
     @Test
     fun `account recovery flow has correct structure`() {
         val flow = DialogFixtures.ACCOUNT_RECOVERY_FLOW
-        assertEquals(4, flow.questions.size)
+        assertEquals(5, flow.questions.size)
         assertEquals("account_recovery", flow.flowContext?.flowType)
         assertEquals("password_reset", flow.flowContext?.metadata?.get("recovery_type"))
     }

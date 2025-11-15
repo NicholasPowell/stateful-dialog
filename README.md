@@ -353,10 +353,10 @@ val premiumContext = DialogFixtures.PREMIUM_USER_CONTEXT
 ```
 
 Available fixtures:
-- **User Onboarding**: 4 questions covering name, email, role, and experience
-- **Customer Survey**: 4 questions about satisfaction, improvements, recommendation, and usage
-- **Support Chat**: 4 questions for issue type, description, severity, and reproduction
-- **Account Recovery**: 4 questions for username, recovery method, last login, and suspicious activity
+- **User Onboarding**: 5 questions covering name, email, role, experience, and team size
+- **Customer Survey**: 5 questions about satisfaction, improvements, recommendation, usage, and favorite features
+- **Support Chat**: 5 questions for issue type, description, severity, reproduction, and error messages
+- **Account Recovery**: 5 questions for username, recovery method, last login, suspicious activity, and device access
 
 ## Development
 
