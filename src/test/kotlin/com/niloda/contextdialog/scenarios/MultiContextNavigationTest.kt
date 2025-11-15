@@ -161,16 +161,26 @@ class MultiContextNavigationTest {
         println("State updated: currentIndex = ${currentState.currentIndex}")
         assertEquals(4, currentState.currentIndex)
 
+        println("Q: What is your favorite feature of our product?")
+        println("User response: 'The intuitive user interface'")
+        val (newState8, intention8) = currentMachine.onResponse("The intuitive user interface", currentState)
+        println("Intention detected: ${intention8::class.simpleName}")
+        machineStates[currentMachine] = newState8
+        currentState = newState8
+        println("State updated: currentIndex = ${currentState.currentIndex}")
+        assertEquals(5, currentState.currentIndex)
+
         // Survey completed
         rendering = currentMachine.render(currentContext, currentState)
         assertTrue(rendering is DialogRendering.Completed)
         val completed = rendering as DialogRendering.Completed
         println("Dialog completed! Responses: ${completed.responses}")
-        assertEquals(4, completed.responses.size)
+        assertEquals(5, completed.responses.size)
         assertEquals("Very Satisfied", completed.responses["satisfaction"])
         assertEquals("The app is great!", completed.responses["improvements"])
         assertEquals("Definitely", completed.responses["recommendation"])
         assertEquals("Daily", completed.responses["usage_frequency"])
+        assertEquals("The intuitive user interface", completed.responses["favorite_feature"])
 
         println("=== Multi-Context Navigation Test Completed Successfully ===")
     }

@@ -34,28 +34,32 @@ object DialogFixtures {
         Question.Text("name", "What is your full name?"),
         Question.Text("email", "What is your email address?"),
         Question.MultipleChoice("role", "What is your role?", listOf("Developer", "Designer", "Manager", "Other")),
-        Question.MultipleChoice("experience", "How many years of experience do you have?", listOf("0-2", "3-5", "6-10", "10+"))
+        Question.MultipleChoice("experience", "How many years of experience do you have?", listOf("0-2", "3-5", "6-10", "10+")),
+        Question.MultipleChoice("team_size", "What size team do you typically work with?", listOf("Solo", "2-5", "6-10", "11-20", "20+"))
     )
 
     val CUSTOMER_SURVEY_QUESTIONS = listOf(
         Question.MultipleChoice("satisfaction", "How satisfied are you with our product?", listOf("Very Satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very Dissatisfied")),
         Question.Text("improvements", "What improvements would you suggest?"),
         Question.MultipleChoice("recommendation", "Would you recommend our product?", listOf("Definitely", "Probably", "Not Sure", "Probably Not", "Definitely Not")),
-        Question.MultipleChoice("usage_frequency", "How often do you use our product?", listOf("Daily", "Weekly", "Monthly", "Rarely", "First Time"))
+        Question.MultipleChoice("usage_frequency", "How often do you use our product?", listOf("Daily", "Weekly", "Monthly", "Rarely", "First Time")),
+        Question.Text("favorite_feature", "What is your favorite feature of our product?")
     )
 
     val SUPPORT_CHAT_QUESTIONS = listOf(
         Question.MultipleChoice("issue_type", "What type of issue are you experiencing?", listOf("Login Problem", "Performance Issue", "Feature Request", "Bug Report", "Other")),
         Question.Text("description", "Please describe the issue in detail"),
         Question.MultipleChoice("severity", "How severe is this issue?", listOf("Critical", "High", "Medium", "Low")),
-        Question.MultipleChoice("reproduction", "Can you consistently reproduce this issue?", listOf("Yes", "No", "Sometimes"))
+        Question.MultipleChoice("reproduction", "Can you consistently reproduce this issue?", listOf("Yes", "No", "Sometimes")),
+        Question.Text("error_message", "If applicable, what error message did you receive?")
     )
 
     val ACCOUNT_RECOVERY_QUESTIONS = listOf(
         Question.Text("username", "What is your username or email?"),
         Question.MultipleChoice("recovery_method", "How would you like to recover your account?", listOf("Email Reset Link", "SMS Code", "Security Questions")),
         Question.Text("last_login", "When did you last successfully log in? (optional)"),
-        Question.MultipleChoice("suspicious_activity", "Did you notice any suspicious activity?", listOf("Yes", "No", "Not Sure"))
+        Question.MultipleChoice("suspicious_activity", "Did you notice any suspicious activity?", listOf("Yes", "No", "Not Sure")),
+        Question.MultipleChoice("device_access", "Are you using the same device you normally use?", listOf("Yes", "No", "Different Device", "Not Sure"))
     )
 
     // Complete Dialog Flows
@@ -90,7 +94,8 @@ object DialogFixtures {
             "name" to "John Doe",
             "email" to "john.doe@example.com",
             "role" to "Developer",
-            "experience" to "3-5"
+            "experience" to "3-5",
+            "team_size" to "6-10"
         )
 
         // Customer Survey
@@ -98,7 +103,8 @@ object DialogFixtures {
             "satisfaction" to "Very Satisfied",
             "improvements" to "Add more customization options",
             "recommendation" to "Definitely",
-            "usage_frequency" to "Daily"
+            "usage_frequency" to "Daily",
+            "favorite_feature" to "The intuitive user interface and quick response time"
         )
 
         // Support Chat
@@ -106,7 +112,8 @@ object DialogFixtures {
             "issue_type" to "Performance Issue",
             "description" to "The app is slow when loading large datasets",
             "severity" to "High",
-            "reproduction" to "Yes"
+            "reproduction" to "Yes",
+            "error_message" to "Timeout error after 30 seconds"
         )
 
         // Account Recovery
@@ -114,7 +121,8 @@ object DialogFixtures {
             "username" to "user@example.com",
             "recovery_method" to "Email Reset Link",
             "last_login" to "Yesterday",
-            "suspicious_activity" to "No"
+            "suspicious_activity" to "No",
+            "device_access" to "Yes"
         )
     }
 
