@@ -317,6 +317,9 @@ stateful-dialog-demo/
 ### Dependencies:
 ```kotlin
 dependencies {
+    // The main stateful-dialog library
+    // Group ID: com.niloda.contextdialog (the library's group)
+    // Artifact ID: stateful-dialog
     implementation("com.niloda.contextdialog:stateful-dialog:0.1.0-SNAPSHOT")
     // Other Kobweb dependencies
 }
