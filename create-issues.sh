@@ -41,6 +41,52 @@ trap "rm -rf $TEMP_DIR" EXIT
 MAPPING_FILE="$TEMP_DIR/issue_mapping.txt"
 touch "$MAPPING_FILE"
 
+# Track labels that have been checked/created
+LABELS_CHECKED_FILE="$TEMP_DIR/labels_checked.txt"
+touch "$LABELS_CHECKED_FILE"
+
+# Function to ensure a label exists, creating it if necessary
+ensure_label_exists() {
+    local label=$1
+    
+    # Check if we've already verified this label
+    if grep -qx "$label" "$LABELS_CHECKED_FILE" 2>/dev/null; then
+        return 0
+    fi
+    
+    # Check if label exists in the repository
+    if gh label list --repo "$REPO" --limit 1000 | grep -q "^$label[[:space:]]"; then
+        echo "$label" >> "$LABELS_CHECKED_FILE"
+        return 0
+    fi
+    
+    # Label doesn't exist, create it with a default color
+    echo "  Creating missing label: $label"
+    if gh label create "$label" --repo "$REPO" --color "0366d6" 2>/dev/null; then
+        echo "$label" >> "$LABELS_CHECKED_FILE"
+        return 0
+    else
+        echo "  Warning: Could not create label '$label', it may already exist"
+        echo "$label" >> "$LABELS_CHECKED_FILE"
+        return 0
+    fi
+}
+
+# Function to ensure all labels in a comma-separated list exist
+ensure_labels_exist() {
+    local labels_string=$1
+    
+    # Split labels by comma and check each one
+    IFS=',' read -ra label_array <<< "$labels_string"
+    for label in "${label_array[@]}"; do
+        # Trim any whitespace (though we normalize earlier)
+        label=$(echo "$label" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        if [ -n "$label" ]; then
+            ensure_label_exists "$label"
+        fi
+    done
+}
+
 # Function to create an issue
 create_issue() {
     local issue_num=$1
@@ -49,6 +95,9 @@ create_issue() {
     local body_file=$4
     
     echo "Creating Issue $issue_num: $title"
+    
+    # Ensure all labels exist before creating the issue
+    ensure_labels_exist "$labels"
     
     # Create the issue and capture the URL
     if issue_url=$(gh issue create \
