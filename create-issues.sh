@@ -59,7 +59,7 @@ create_issue() {
         
         echo "  ✓ Created: $issue_url"
         # Extract issue number from URL
-        issue_number=$(echo "$issue_url" | grep -o '[0-9]\+$')
+        issue_number=$(echo "$issue_url" | grep -oE '[0-9]+$')
         # Store mapping
         echo "Issue $issue_num -> #$issue_number" >> "$MAPPING_FILE"
         return 0
@@ -71,7 +71,6 @@ create_issue() {
 }
 
 # Parse the GITHUB_ISSUES.md file and extract issues
-current_issue=""
 current_title=""
 current_labels=""
 current_body=""
@@ -94,7 +93,6 @@ while IFS= read -r line; do
         fi
         
         # Reset for new issue
-        current_issue="${BASH_REMATCH[1]}"
         current_title=""
         current_labels=""
         current_body=""
