@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to create GitHub issues from GITHUB_ISSUES.md
 # This script parses the GITHUB_ISSUES.md file and creates issues using the GitHub CLI
+# Compatible with bash 3.2+ (macOS and older Linux systems)
 
 set -e
 
@@ -32,9 +33,13 @@ echo "Creating GitHub issues from $ISSUES_FILE..."
 echo "Repository: $REPO"
 echo ""
 
-# Temporary directory for issue bodies
+# Temporary directory for issue bodies and mapping
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
+
+# File to store issue number mappings
+MAPPING_FILE="$TEMP_DIR/issue_mapping.txt"
+touch "$MAPPING_FILE"
 
 # Function to create an issue
 create_issue() {
@@ -46,17 +51,18 @@ create_issue() {
     echo "Creating Issue $issue_num: $title"
     
     # Create the issue and capture the URL
-    issue_url=$(gh issue create \
+    if issue_url=$(gh issue create \
         --repo "$REPO" \
         --title "$title" \
         --body-file "$body_file" \
-        --label "$labels" 2>&1)
-    
-    if [ $? -eq 0 ]; then
+        --label "$labels" 2>&1); then
+        
         echo "  ✓ Created: $issue_url"
         # Extract issue number from URL
         issue_number=$(echo "$issue_url" | grep -o '[0-9]\+$')
-        echo "$issue_number"
+        # Store mapping
+        echo "Issue $issue_num -> #$issue_number" >> "$MAPPING_FILE"
+        return 0
     else
         echo "  ✗ Failed to create issue"
         echo "$issue_url"
@@ -71,7 +77,6 @@ current_labels=""
 current_body=""
 in_body=false
 issue_count=0
-declare -A issue_numbers
 
 while IFS= read -r line; do
     # Detect issue boundary
@@ -82,11 +87,8 @@ while IFS= read -r line; do
             body_file="$TEMP_DIR/issue_${issue_count}.md"
             echo "$current_body" > "$body_file"
             
-            # Create the issue and store its number
-            created_number=$(create_issue "$issue_count" "$current_title" "$current_labels" "$body_file")
-            if [ -n "$created_number" ]; then
-                issue_numbers["Issue $issue_count"]="$created_number"
-            fi
+            # Create the issue
+            create_issue "$issue_count" "$current_title" "$current_labels" "$body_file"
             echo ""
             sleep 2  # Rate limiting - wait between issue creations
         fi
@@ -126,10 +128,7 @@ if [ -n "$current_title" ] && [ -n "$current_body" ]; then
     body_file="$TEMP_DIR/issue_${issue_count}.md"
     echo "$current_body" > "$body_file"
     
-    created_number=$(create_issue "$issue_count" "$current_title" "$current_labels" "$body_file")
-    if [ -n "$created_number" ]; then
-        issue_numbers["Issue $issue_count"]="$created_number"
-    fi
+    create_issue "$issue_count" "$current_title" "$current_labels" "$body_file"
 fi
 
 echo ""
@@ -138,13 +137,11 @@ echo "Summary: Created $issue_count issues"
 echo "================================================"
 
 # Print mapping of issue descriptions to numbers
-if [ ${#issue_numbers[@]} -gt 0 ]; then
+if [ -s "$MAPPING_FILE" ]; then
     echo ""
     echo "Issue Number Mapping:"
     echo "--------------------"
-    for key in "${!issue_numbers[@]}"; do
-        echo "$key -> #${issue_numbers[$key]}"
-    done
+    cat "$MAPPING_FILE"
     
     echo ""
     echo "Note: You may want to update dependency references in the issues"
