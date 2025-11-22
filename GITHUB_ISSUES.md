@@ -2,6 +2,15 @@
 
 This document contains GitHub issues derived from the KOBWEB_DEMO_PLAN.md. Copy each issue below to create them in the GitHub repository.
 
+## Important Notes
+
+**Dependency References:** Issues include dependency references in the format `#[Phase X.Y]` which are placeholders. After creating each issue in GitHub, you should:
+1. Note the issue number assigned by GitHub
+2. Update subsequent issues to replace placeholder references with actual issue numbers (e.g., replace `#[Phase 1.1]` with `#123`)
+3. Alternatively, create all issues first and then edit them to add the actual issue number links
+
+**Creating Issues:** Issues should be created in order (Phase 1 first, then Phase 2, etc.) to maintain proper dependency tracking.
+
 ---
 
 ## Issue 1: Phase 1 - Resolve Gradle plugin version conflicts
@@ -875,8 +884,15 @@ To create these issues in GitHub:
 4. Paste the title and body
 5. Add the specified labels
 6. Create the issue
+7. Update dependency references in remaining issues with actual issue numbers
 
 Alternatively, use GitHub CLI:
 ```bash
-gh issue create --title "Issue Title" --body "Issue body" --label "label1,label2"
+# Create an issue with title, body, and labels
+gh issue create --repo niloda-tech/stateful-dialog --title "Issue Title" --body "Issue body" --label "label1,label2"
+
+# Or create from a file
+gh issue create --repo niloda-tech/stateful-dialog --title "Issue Title" --body-file issue-body.md --label "label1,label2"
 ```
+
+After creating each issue, note its number and update subsequent issue dependency references.
