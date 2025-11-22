@@ -111,7 +111,7 @@ while IFS= read -r line; do
         # End of current issue body
         continue
         
-    elif [ "$in_body" = true ] && [ -n "$line" ]; then
+    elif [ "$in_body" = true ]; then
         if [ -n "$current_body" ]; then
             current_body="$current_body"$'\n'"$line"
         else

@@ -35,15 +35,6 @@ The script will:
 - Display progress for each issue created
 - Show a summary mapping of issue numbers at the end
 
-### Dry Run / Testing
-
-To test the parsing without creating actual issues, you can run:
-```bash
-./test-parse.sh
-```
-
-This will show what issues would be created without actually creating them.
-
 ## What the Script Does
 
 1. **Validates Prerequisites**: Checks that `gh` is installed and authenticated
@@ -102,6 +93,5 @@ If you encounter rate limiting issues, increase the sleep time in the script (li
 ## Files
 
 - `create-issues.sh` - Main script to create issues
-- `test-parse.sh` - Dry-run script to test parsing
 - `GITHUB_ISSUES.md` - Source file containing all issue definitions
 - `CREATE_ISSUES_README.md` - This file
