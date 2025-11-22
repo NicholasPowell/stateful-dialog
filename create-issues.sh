@@ -8,6 +8,7 @@ set -e
 
 REPO="niloda-tech/stateful-dialog"
 ISSUES_FILE="GITHUB_ISSUES.md"
+DEFAULT_LABEL_COLOR="0366d6"  # Default blue color for created labels
 
 # Check if gh CLI is installed
 if ! command -v gh &> /dev/null; then
@@ -54,15 +55,15 @@ ensure_label_exists() {
         return 0
     fi
     
-    # Check if label exists in the repository (exact match)
-    if gh label list --repo "$REPO" | grep -qE "^${label}[[:space:]]"; then
+    # Check if label exists in the repository (match anywhere in line containing the label)
+    if gh label list --repo "$REPO" | awk '{print $1}' | grep -qx "$label"; then
         echo "$label" >> "$LABELS_CHECKED_FILE"
         return 0
     fi
     
     # Label doesn't exist, create it with a default color
     echo "  Creating missing label: $label"
-    if gh label create "$label" --repo "$REPO" --color "0366d6" 2>/dev/null; then
+    if gh label create "$label" --repo "$REPO" --color "$DEFAULT_LABEL_COLOR" 2>/dev/null; then
         echo "$label" >> "$LABELS_CHECKED_FILE"
         return 0
     else
@@ -76,11 +77,22 @@ ensure_label_exists() {
 ensure_labels_exist() {
     local labels_string=$1
     local label
+    local remaining="$labels_string"
     
-    # Split labels by comma (bash 3.x compatible)
-    echo "$labels_string" | tr ',' '\n' | while read -r label; do
-        # Trim any whitespace
+    # Split labels by comma (bash 3.x compatible, without subshell)
+    while [ -n "$remaining" ]; do
+        # Extract first label
+        if echo "$remaining" | grep -q ','; then
+            label=$(echo "$remaining" | sed 's/,.*//')
+            remaining=$(echo "$remaining" | sed 's/^[^,]*,//')
+        else
+            label="$remaining"
+            remaining=""
+        fi
+        
+        # Trim whitespace
         label=$(echo "$label" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
         if [ -n "$label" ]; then
             ensure_label_exists "$label"
         fi
