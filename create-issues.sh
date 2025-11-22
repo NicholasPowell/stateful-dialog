@@ -54,8 +54,8 @@ ensure_label_exists() {
         return 0
     fi
     
-    # Check if label exists in the repository
-    if gh label list --repo "$REPO" | grep -q "^$label[[:space:]]"; then
+    # Check if label exists in the repository (exact match)
+    if gh label list --repo "$REPO" | grep -qE "^${label}[[:space:]]"; then
         echo "$label" >> "$LABELS_CHECKED_FILE"
         return 0
     fi
@@ -77,20 +77,14 @@ ensure_labels_exist() {
     local labels_string=$1
     local label
     
-    # Split labels by comma and check each one (bash 3.x compatible)
-    # Save IFS and change to comma
-    local old_ifs=$IFS
-    IFS=','
-    for label in $labels_string; do
-        IFS=$old_ifs
-        # Trim any whitespace (though we normalize earlier)
+    # Split labels by comma (bash 3.x compatible)
+    echo "$labels_string" | tr ',' '\n' | while read -r label; do
+        # Trim any whitespace
         label=$(echo "$label" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
         if [ -n "$label" ]; then
             ensure_label_exists "$label"
         fi
-        IFS=','
     done
-    IFS=$old_ifs
 }
 
 # Function to create an issue
