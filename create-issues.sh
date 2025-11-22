@@ -102,7 +102,10 @@ while IFS= read -r line; do
         current_title="${BASH_REMATCH[1]}"
         
     elif [[ "$line" =~ ^\*\*Labels:\*\*\ (.+)$ ]]; then
+        # Remove leading/trailing whitespace and normalize spaces around commas
         current_labels="${BASH_REMATCH[1]}"
+        # Remove spaces around commas for proper label parsing
+        current_labels=$(echo "$current_labels" | sed 's/ *, */,/g')
         
     elif [[ "$line" =~ ^\*\*Body:\*\*$ ]]; then
         in_body=true
